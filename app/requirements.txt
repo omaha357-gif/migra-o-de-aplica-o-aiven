@@ -1,4 +1,4 @@
 Flask==3.0.3
-psycopg2-binary==3.12.10
+psycopg2-binary==2.9.11
 gunicorn==22.0.0
 requests==2.32.3
