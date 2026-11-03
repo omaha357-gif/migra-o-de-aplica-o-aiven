@@ -7,10 +7,7 @@ o cache está velho (ver refresh_stale_series abaixo).
 Variáveis de ambiente esperadas (ver .env.example):
   AIVEN_DB_URL   -> string de conexão fornecida pela Aiven
   PORT           -> porta HTTP (default 8080)
-  CACHE_HOURS    -> horas antes de buscar dados novos na API (default 6)
-
-
-  
+  CACHE_HOURS    -> horas antes de buscar dados novos na API (default 6)  
 """
 
 import os
