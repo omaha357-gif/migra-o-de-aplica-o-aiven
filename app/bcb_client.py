@@ -17,7 +17,7 @@ DB_URL = os.environ.get("AIVEN_DB_URL")
 # Séries do SGS/BCB — dados abertos, sem autenticação.
 # Referência completa de códigos: https://www3.bcb.gov.br/sgspub
 SERIES = {
-    1:   {"name": "Dólar comercial (venda)", "unit": "R$", "casas": 4},
+    4468:  {"name": "Dívida líquida do setor público e dívida do governo geral", "unit": "R$", "casas": 4},
     432: {"name": "Meta Selic definida pelo Copom", "unit": "% a.a.", "casas": 2},
     433: {"name": "IPCA - variação mensal", "unit": "%", "casas": 2},
 }
