@@ -23,6 +23,8 @@ SERIES = {
     4504: {"name": "Governo Federal", "unit": "% m.", "casas": 2},
     4509: {"name": "Empresas estatais", "unit": "% m.", "casas": 2},
 }
+POINTS_PER_SERIES = 30
+
 
 # Pool de conexões: a Aiven fica em outra região/rede que o Render, então
 # abrir uma conexão nova (TCP + handshake SSL) custa ~1s toda vez. Uma
