@@ -17,10 +17,10 @@ DB_URL = os.environ.get("AIVEN_DB_URL")
 # Séries do SGS/BCB — dados abertos, sem autenticação.
 # Referência completa de códigos: https://www3.bcb.gov.br/sgspub
 SERIES = {
-    7326:  {"name": "PIB - taxa de variação real no ano", "unit": "% a.a.", "casas": 2},
-    7327: {"name": "PIB agropecuária", "unit": "% a.a.", "casas": 2},
-    7328: {"name": "PIB indústria", "unit": "% a.a.", "casas": 2},
-    7329: {"name": "PIB serviços", "unit": "% a.a.", "casas": 2},
+    7326:  {"name": "Governos municipais", "unit": "% m.", "casas": 2},
+    4507: {"name": "Governos estaduais", "unit": "% m.", "casas": 2},
+    4504: {"name": "Governo Federal", "unit": "% m.", "casas": 2},
+    4509: {"name": "Empresas estatais", "unit": "% m.", "casas": 2},
 }
 POINTS_PER_SERIES = 30
 
