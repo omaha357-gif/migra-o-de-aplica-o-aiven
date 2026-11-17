@@ -62,32 +62,50 @@ def _get_pool():
     if _pool is None:
         if not DB_URL:
             raise RuntimeError("AIVEN_DB_URL não configurada")
-        _pool = psycopg2_pool.ThreadedConnectionPool(
-            minconn=1,
-            maxconn=5,
-            dsn=DB_URL,
-            sslmode="require",
-            cursor_factory=RealDictCursor,
-            connect_timeout=10,
-        )
+_pool = psycopg2_pool.ThreadedConnectionPool(
+    minconn=1,
+    maxconn=5,
+    dsn=DB_URL,
+    sslmode="require",
+    cursor_factory=RealDictCursor,
+    connect_timeout=15,
+    keepalives=1,
+    keepalives_idle=30,
+    keepalives_interval=10,
+    keepalives_count=3,
+)
     return _pool
 
 
 @contextmanager
+@contextmanager
 def get_connection():
-    """Pega uma conexão emprestada do pool e devolve ao sair do bloco
-    `with` — em vez de abrir/fechar uma conexão física nova toda vez."""
-    conn = _get_pool().getconn()
+    """Obtém uma conexão válida e descarta conexões encerradas."""
+
+    pool = _get_pool()
+    conn = pool.getconn()
+
+    # Descarta conexões que já chegaram encerradas.
+    if conn.closed:
+        pool.putconn(conn, close=True)
+        conn = pool.getconn()
+
     try:
         yield conn
+
     except Exception:
-        # Se algo deu errado no meio de uma transação, desfaz antes de
-        # devolver ao pool — senão a próxima requisição que reaproveitar
-        # essa conexão herda uma transação "abortada" e falha em cascata.
-        conn.rollback()
+        # Só tenta rollback se a conexão ainda estiver aberta.
+        if not conn.closed:
+            try:
+                conn.rollback()
+            except psycopg2.Error:
+                pass
+
         raise
+
     finally:
-        _get_pool().putconn(conn)
+        # Nunca devolve ao pool uma conexão encerrada.
+        pool.putconn(conn, close=bool(conn.closed))
 
 
 def init_db():
