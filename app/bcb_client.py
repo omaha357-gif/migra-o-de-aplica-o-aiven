@@ -17,12 +17,34 @@ DATA_INICIAL = datetime.date(2015, 1, 1)
 DATA_FINAL = datetime.date(2026, 9, 30)
 # Séries do SGS/BCB — dados abertos, sem autenticação.
 # Referência completa de códigos: https://www3.bcb.gov.br/sgspub
+
 SERIES = {
-    4508:  {"name": "Governos municipais", "unit": "% do PIB", "casas": 3},
-    4507: {"name": "Governos estaduais", "unit": "% do PIB", "casas": 3},
-    4504: {"name": "Governo Federal", "unit": "% do PIB", "casas": 3},
-    4509: {"name": "Empresas estatais", "unit": "% do PIB", "casas": 3},
+    1: {
+        "name": "Crescimento do PIB",
+        "indicator": "NY.GDP.MKTP.KD.ZG",
+        "unit": "%",
+        "casas": 2
+    },
+    2: {
+        "name": "Inflação",
+        "indicator": "FP.CPI.TOTL.ZG",
+        "unit": "%",
+        "casas": 2
+    },
+    3: {
+        "name": "Desemprego",
+        "indicator": "SL.UEM.TOTL.ZS",
+        "unit": "%",
+        "casas": 2
+    },
+    4: {
+        "name": "Usuários de internet",
+        "indicator": "IT.NET.USER.ZS",
+        "unit": "%",
+        "casas": 2
+    },
 }
+
 POINTS_PER_SERIES = 30
 
 
@@ -116,17 +138,20 @@ def init_db():
 
 
 def fetch_series_from_bcb(series_code: int):
-    """Busca todos os pontos de uma série no período configurado."""
+    """Busca dados históricos na API do Banco Mundial."""
 
-    start = DATA_INICIAL
-    end = DATA_FINAL
+    meta = SERIES[series_code]
+    indicator = meta["indicator"]
 
-    url = f"https://api.bcb.gov.br/dados/serie/bcdata.sgs.{series_code}/dados"
+    url = (
+        f"https://api.worldbank.org/v2/"
+        f"country/BRA/indicator/{indicator}"
+    )
 
     params = {
-        "formato": "json",
-        "dataInicial": start.strftime("%d/%m/%Y"),
-        "dataFinal": end.strftime("%d/%m/%Y"),
+        "format": "json",
+        "date": f"{DATA_INICIAL}:{DATA_FINAL}",
+        "per_page": 100
     }
 
     resp = requests.get(url, params=params, timeout=30)
@@ -134,17 +159,24 @@ def fetch_series_from_bcb(series_code: int):
 
     raw = resp.json()
 
+    if not isinstance(raw, list) or len(raw) < 2:
+        raise ValueError(f"Resposta inesperada para {indicator}")
+
     parsed = []
 
-    for item in raw:
-        ref_date = datetime.datetime.strptime(
-            item["data"], "%d/%m/%Y"
-        ).date()
+    for item in raw[1] or []:
+
+        if item["value"] is None:
+            continue
+
+        year = int(item["date"])
 
         parsed.append({
-            "ref_date": ref_date,
-            "value": float(item["valor"])
+            "ref_date": datetime.date(year, 1, 1),
+            "value": float(item["value"])
         })
+
+    parsed.sort(key=lambda x: x["ref_date"])
 
     return parsed
 
