@@ -17,9 +17,10 @@ DB_URL = os.environ.get("AIVEN_DB_URL")
 # Séries do SGS/BCB — dados abertos, sem autenticação.
 # Referência completa de códigos: https://www3.bcb.gov.br/sgspub
 SERIES = {
-    4468:  {"name": "Dívida líquida do setor público e dívida do governo geral", "unit": "R$", "casas": 4},
-    13521: {"name": "Meta inflacionaria", "unit": "% a.a.", "casas": 2},
-    433: {"name": "IPCA - variação mensal", "unit": "%", "casas": 2},
+    7326:  {"name": "PIB - taxa de variação real no ano", "unit": "% a.a.", "casas": 2},
+    7327: {"name": "PIB agropecuária", "unit": "% a.a.", "casas": 2},
+    7328: {"name": "PIB indústria", "unit": "% a.a.", "casas": 2},
+    7329: {"name": "PIB serviços", "unit": "% a.a.", "casas": 2},
 }
 POINTS_PER_SERIES = 30
 
