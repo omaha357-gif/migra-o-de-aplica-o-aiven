@@ -20,25 +20,25 @@ DB_URL = os.environ.get("AIVEN_DB_URL")
 # Séries do SGS/BCB — dados abertos, sem autenticação.
 # Referência completa de códigos: https://www3.bcb.gov.br/sgspub
 SERIES = {
-    7326: {
-        "name": "Governos municipais",
-        "unit": "% m.",
-        "casas": 2,
+    3545: {
+        "name": "Reservas internacionais",
+        "unit": "US$ (milhões)",
+        "casas": 4,
     },
-    4507: {
-        "name": "Governos estaduais",
-        "unit": "% m.",
-        "casas": 2,
+    3850: {
+        "name": "Exportações (Área do Euro)",
+        "unit": "US$ (bilhões)",
+        "casas": 4,
     },
-    4504: {
-        "name": "Governo Federal",
-        "unit": "% m.",
-        "casas": 2,
+    3856: {
+        "name": "Exportações (USA)",
+        "unit": "US$ (bilhões)",
+        "casas": 4,
     },
-    4509: {
-        "name": "Empresas estatais",
-        "unit": "% m.",
-        "casas": 2,
+    3861: {
+        "name": "Exportações (China)",
+        "unit": "US$ (bilhões)",
+        "casas": 4,
     },
 }
 
