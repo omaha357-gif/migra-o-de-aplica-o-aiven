@@ -18,10 +18,10 @@ DATA_FINAL = datetime.date(2026, 9, 30)
 # Séries do SGS/BCB — dados abertos, sem autenticação.
 # Referência completa de códigos: https://www3.bcb.gov.br/sgspub
 SERIES = {
-    4508:  {"name": "Governos municipais", "unit": "% m.", "casas": 2},
-    4507: {"name": "Governos estaduais", "unit": "% m.", "casas": 2},
-    4504: {"name": "Governo Federal", "unit": "% m.", "casas": 2},
-    4509: {"name": "Empresas estatais", "unit": "% m.", "casas": 2},
+    4508:  {"name": "Governos municipais", "unit": "% do PIB", "casas": 3},
+    4507: {"name": "Governos estaduais", "unit": "% do PIB", "casas": 3},
+    4504: {"name": "Governo Federal", "unit": "% do PIB", "casas": 3},
+    4509: {"name": "Empresas estatais", "unit": "% do PIB", "casas": 3},
 }
 POINTS_PER_SERIES = 30
 
