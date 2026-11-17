@@ -13,7 +13,8 @@ from psycopg2.extras import RealDictCursor
 import requests
 
 DB_URL = os.environ.get("AIVEN_DB_URL")
-
+DATA_INICIAL = datetime.date(2015, 1, 1)
+DATA_FINAL = datetime.date(2026, 9, 30)
 # Séries do SGS/BCB — dados abertos, sem autenticação.
 # Referência completa de códigos: https://www3.bcb.gov.br/sgspub
 SERIES = {
@@ -22,7 +23,6 @@ SERIES = {
     4504: {"name": "Governo Federal", "unit": "% m.", "casas": 2},
     4509: {"name": "Empresas estatais", "unit": "% m.", "casas": 2},
 }
-POINTS_PER_SERIES = 30
 
 # Pool de conexões: a Aiven fica em outra região/rede que o Render, então
 # abrir uma conexão nova (TCP + handshake SSL) custa ~1s toda vez. Uma
@@ -113,34 +113,38 @@ def init_db():
             raise
 
 
-def fetch_series_from_bcb(series_code: int, n: int = POINTS_PER_SERIES):
-    """Busca os últimos N pontos de uma série no SGS do Banco Central.
+def fetch_series_from_bcb(series_code: int):
+    """Busca todos os pontos de uma série no período configurado."""
 
-    Observação: o endpoint `/dados/ultimos/{n}` da API do BCB está
-    respondendo 400 Bad Request no momento (testado manualmente). Por
-    isso usamos aqui o endpoint padrão com `dataInicial`/`dataFinal`, que
-    funciona normalmente, e pegamos só os últimos N pontos retornados.
-    """
-    days_back = n * 3  # margem folgada: nem todo dia tem valor (fins de semana, feriados etc.)
-    today = datetime.date.today()
-    start = today - datetime.timedelta(days=days_back)
+    start = DATA_INICIAL
+    end = DATA_FINAL
 
     url = f"https://api.bcb.gov.br/dados/serie/bcdata.sgs.{series_code}/dados"
+
     params = {
         "formato": "json",
         "dataInicial": start.strftime("%d/%m/%Y"),
-        "dataFinal": today.strftime("%d/%m/%Y"),
+        "dataFinal": end.strftime("%d/%m/%Y"),
     }
-    resp = requests.get(url, params=params, timeout=10)
+
+    resp = requests.get(url, params=params, timeout=30)
     resp.raise_for_status()
-    raw = resp.json()  # [{"data": "27/08/2026", "valor": "5.3521"}, ...]
+
+    raw = resp.json()
 
     parsed = []
-    for item in raw:
-        ref_date = datetime.datetime.strptime(item["data"], "%d/%m/%Y").date()
-        parsed.append({"ref_date": ref_date, "value": float(item["valor"])})
-    return parsed[-n:]
 
+    for item in raw:
+        ref_date = datetime.datetime.strptime(
+            item["data"], "%d/%m/%Y"
+        ).date()
+
+        parsed.append({
+            "ref_date": ref_date,
+            "value": float(item["valor"])
+        })
+
+    return parsed
 
 def upsert_series(series_code: int, points: list):
     """Grava (ou atualiza) pontos de uma série direto no Postgres —
