@@ -18,8 +18,10 @@ DB_URL = os.environ.get("AIVEN_DB_URL")
 # Referência completa de códigos: https://www3.bcb.gov.br/sgspub
 SERIES = {
     1:   {"name": "Dólar comercial (venda)", "unit": "R$", "casas": 4},
-    4192: {"name": "PIB acumulado dos últimos 12 meses em dólares", "unit": "US$ (milhões)", "casas": 9},
-    4468: {"name": "Dívida Líquida do Governo Federal e Banco Central", "unit": "R$ (milhões)", "casas": 9},
+    3: {"name": "Taxa de câmbio - Flutuante", "unit": "u.m.c./US$", "casas": 9},
+    8: {"name": "Bovespa - Volume", "unit": "R$ (milhões)", "casas": 9},
+    4380: {"name": "PIB mensal", "unit": "R$ (milhões)", "casas": 9},
+
 }
 POINTS_PER_SERIES = 30
 
