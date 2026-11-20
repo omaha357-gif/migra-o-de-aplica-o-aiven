@@ -21,6 +21,8 @@ SERIES = {
     3: {"name": "Taxa de câmbio - Flutuante", "unit": "u.m.c./US$", "casas": 9},
     8: {"name": "Bovespa - Volume", "unit": "R$ (milhões)", "casas": 9},
     4380: {"name": "PIB mensal", "unit": "R$ (milhões)", "casas": 9},
+    3546:  {"name": "Reservas internacionais (liquidez)", "unit": "US$ milhões", "casas": 0},
+    21619: {"name": "Euro comercial (venda)", "unit": "R$", "casas": 4},    
 
 }
 POINTS_PER_SERIES = 30
